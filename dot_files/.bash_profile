@@ -38,5 +38,5 @@ $       stashes
 EOF
 }
 
-export DEFAULT_PS1='\e[0;36m\n\d \t \u@\H\n\w $(__git_ps1)\e[m\n\$ '
+export DEFAULT_PS1='\e[38;5;002m\n\d \t \u\n\w $(__git_ps1)\e[m\n\$ '
 export PS1="$DEFAULT_PS1"
