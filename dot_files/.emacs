@@ -15,12 +15,12 @@
 
 (autoload 'package-pinned-packages "package")
 
-(setq required-packages '(
-                          (ag . "melpa-stable")
+(setq required-packages '((ag . "melpa-stable")
                           (bats-mode . "melpa")
                           (better-defaults . "melpa-stable")
                           (cider . "melpa-stable")
                           (clojure-mode . "melpa-stable")
+			  (company . "melpa-stable")
                           (expand-region . "melpa-stable")
                           (ido-completing-read+ . "melpa-stable")
                           (ido-ubiquitous . "melpa-stable")
@@ -31,8 +31,8 @@
                           (php-mode . "melpa-stable")
                           (projectile . "melpa-stable")
                           (smex . "melpa-stable")
-                          (yaml-mode . "melpa-stable")
-                          ))
+                          (yaml-mode . "melpa-stable")))
+
 (defun install-required-packages ()
   (interactive)
   (mapc (lambda (package)
@@ -67,3 +67,30 @@
 (setq ido-everywhere t)
 (ido-mode 1)
 (ido-vertical-mode 1)
+(setq ido-vertical-define-keys 'C-n-and-C-p-only)
+
+(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+(add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+(add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+(add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+(add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+(add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+(add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+(add-hook 'after-init-hook             'global-company-mode)
+
+(eval-after-load 'paredit
+  '(progn
+     (define-key paredit-mode-map (kbd "M-p s")  'paredit-forward-slurp-sexp)
+     (define-key paredit-mode-map (kbd "M-p b")  'paredit-forward-barf-sexp)
+     (define-key paredit-mode-map (kbd "M-k")  'kill-sexp)))
+
+;;;hooks
+(add-hook 'clojure-mode-hook (lambda ()
+                               (cider-mode +1)
+                               (paredit-mode +1)))
+
+(add-hook 'emacs-lisp-mode-hook (lambda ()
+                                  (paredit-mode +1)))
+
+(global-set-key (kbd "C-c j") 'join-line)
+(global-set-key (kbd "M-g") 'goto-line)
