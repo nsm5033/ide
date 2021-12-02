@@ -1,0 +1,68 @@
+#!/usr/bin/env bash 
+# Load in bash_completion if we can find it.
+
+# this allows as much history as possible to caputured between many shells.
+shopt -s histappend
+ 
+# in the event that you intentionally (or unintentionally) activated
+# history expansion, this will instead substitue the command you are about
+# to run into the prompt and then you can press enter.
+shopt -s histverify
+ 
+# Allows the use of better globbing. Globbing is almost always the right
+# answer compared to any other form of command parsing. Please read up on
+# it if you haven't already. http://mywiki.wooledge.org/glob
+shopt -s extglob
+ 
+# Ignore some controlling instructions
+# HISTIGNORE is a colon-delimited list of patterns which should be excluded.
+# The '&' is a special pattern which suppresses duplicate entries.
+export HISTIGNORE=$'[ \t]*:&:[fb]g:exit'
+ 
+# Whenever displaying the prompt, write the previous line to disk
+export PROMPT_COMMAND="history -a"
+ 
+export HISTCONTROL="ignoredups"
+export HISTFILESIZE=500000
+export HISTSIZE=500000
+
+if [[ -r /usr/local/etc/bash_completion ]]
+then
+    source /usr/local/etc/bash_completion
+elif [[ -r /usr/share/bash-completion/bash_completion ]]
+then
+    source /usr/share/bash-completion/bash_completion
+else
+    echo "# Can't find bash-completion. You should install it." >&2
+fi
+
+# set up git ps1
+if ! command -v __git_ps1 > /dev/null 2>&1
+then
+    echo "# Can't find __git_ps1. Not adding it to the prompt." >&2
+    __git_ps1() { return 0; }
+fi
+
+# only works if using __git_ps1 as a PROMPT_COMMAND
+# export GIT_PS1_SHOWCOLORHINTS=1
+export GIT_PS1_SHOWDIRTYSTATE=1
+export GIT_PS1_SHOWSTASHSTATE=1
+export GIT_PS1_SHOWUNTRACKEDFILES=1
+export GIT_PS1_SHOWUPSTREAM=auto
+
+git_prompt_help() {
+    column -t -s $'\t' <<EOF
+EOF
+EOF
+*       unstaged changes
++       staged changes
+$       stashes
+%       untracked files
+<       behind
+>       ahead
+<>      diverged
+=       no difference
+EOF
+}
+export DEFAULT_PS1='\e[0;36m\n\d \t \u@\H\n\w\e[m\e[0;35m$(__git_ps1)\e[m\n\$ '
+export PS1="$DEFAULT_PS1"
