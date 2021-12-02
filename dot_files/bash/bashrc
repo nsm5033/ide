@@ -66,3 +66,21 @@ EOF
 }
 export DEFAULT_PS1='\e[0;36m\n\d \t \u@\H\n\w\e[m\e[0;35m$(__git_ps1)\e[m\n\$ '
 export PS1="$DEFAULT_PS1"
+
+# Aliases
+for f in ~/.aliases/*.bash;
+do
+  if [[ -f $f ]]
+  then
+    . "$f"
+  fi
+done
+
+# Functions
+for f in ~/.functions/*.bash
+do
+  if [[ -f $f ]]
+  then
+    . "$f"
+  fi
+done
